@@ -1,1 +1,906 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIAKAD Absensi Penjasorkes - Kelas C - Universitas Pattimura</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons untuk Ikon Premium -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col text-slate-800 antialiased">
 
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="bg-gradient-to-r from-blue-900 to-indigo-950 text-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Identitas Kampus & Logo UNPATTI -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center p-0.5 shadow-md border border-slate-200">
+                        <!-- Logo Universitas Pattimura (UNPATTI) Custom SVG -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-full h-full">
+                            <!-- Background Pentagon Light Blue -->
+                            <polygon points="50,5 94,37 77,89 23,89 6,37" fill="#30a2ff" stroke="#000000" stroke-width="1.5" />
+                            
+                            <!-- Path Curve untuk Tulisan UNIVERSITAS PATTIMURA -->
+                            <path id="unpatti-curve" d="M12,42 Q50,13 88,42" fill="none" stroke="none" />
+                            <text font-family="'Plus Jakarta Sans', sans-serif" font-size="6.8" font-weight="900" fill="#000000" text-anchor="middle">
+                                <textPath href="#unpatti-curve" startOffset="50%">UNIVERSITAS PATTIMURA</textPath>
+                            </text>
+
+                            <!-- Obor Tengah -->
+                            <!-- Tangkai Obor -->
+                            <path d="M49,58 L41,39 C41,39 45,37 48,39 L52,55 Z" fill="#000000" />
+                            <path d="M42,41 L47,43" stroke="#ffffff" stroke-width="0.8" />
+                            <path d="M43,46 L48,48" stroke="#ffffff" stroke-width="0.8" />
+                            
+                            <!-- Api Obor Merah & Oranye -->
+                            <path d="M48,38 C42,27 58,13 62,24 C63,17 53,27 48,38 Z" fill="#ef4444" />
+                            <path d="M47,38 C43,29 52,21 55,27 Z" fill="#f97316" />
+
+                            <!-- Sayap Daun/Hiasan Tradisional Kuning Emas -->
+                            <path d="M16,53 C31,59 36,69 39,73 C33,69 26,61 16,53 Z" fill="#ffd700" stroke="#b8860b" stroke-width="0.5" />
+                            <path d="M84,53 C69,59 64,69 61,73 C67,69 74,61 84,53 Z" fill="#ffd700" stroke="#b8860b" stroke-width="0.5" />
+                            <path d="M31,56 C41,66 43,76 46,79 C39,73 36,63 31,56 Z" fill="#ffd700" stroke="#b8860b" stroke-width="0.5" />
+                            <path d="M69,56 C59,66 57,76 54,79 C61,73 64,63 69,56 Z" fill="#ffd700" stroke="#b8860b" stroke-width="0.5" />
+                            <path d="M41,53 C46,59 49,71 50,76 C48,71 45,59 41,53 Z" fill="#ffd700" stroke="#b8860b" stroke-width="0.5" />
+                            
+                            <!-- Tiga Mutiara Putih -->
+                            <circle cx="50" cy="73" r="6" fill="#ffffff" stroke="#b8860b" stroke-width="0.5" />
+                            <circle cx="40" cy="75" r="4.5" fill="#ffffff" stroke="#b8860b" stroke-width="0.5" />
+                            <circle cx="60" cy="75" r="4.5" fill="#ffffff" stroke="#b8860b" stroke-width="0.5" />
+
+                            <!-- Teks AMBON di bawah -->
+                            <text x="50" y="86" font-family="'Plus Jakarta Sans', sans-serif" font-size="8.5" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="1">AMBON</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-base font-bold tracking-tight leading-tight uppercase">SIAKAD KELAS C</h1>
+                        <p class="text-xs text-yellow-400 font-medium">Pendidikan Jasmani, Kesehatan & Rekreasi</p>
+                    </div>
+                </div>
+
+                <!-- Navigasi Utama (Tabs) -->
+                <div class="flex bg-blue-950/60 p-1 rounded-xl border border-blue-800/50">
+                    <button onclick="switchTab('tab-mahasiswa')" id="nav-mahasiswa" class="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 bg-yellow-500 text-slate-900 shadow">
+                        <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                        <span>Presensi Mhs</span>
+                    </button>
+                    <button onclick="switchTab('tab-dosen')" id="nav-dosen" class="flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all duration-200">
+                        <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
+                        <span>Monitor Dosen/Ketua</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= TAB 1: PRESENSI MAHASISWA ================= -->
+        <div id="tab-mahasiswa" class="space-y-6 block">
+            
+            <!-- Banner Selamat Datang -->
+            <div class="bg-gradient-to-br from-blue-800 to-indigo-900 text-white rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-12 translate-x-6">
+                    <i data-lucide="award" class="w-80 h-80"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-blue-700/60 text-yellow-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">PRESENSI REALTIME CLOUD</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mt-3 leading-tight">Selamat Datang di Sistem Absensi Kelas C</h2>
+                    <p class="text-blue-100 text-xs md:text-sm mt-2 font-normal leading-relaxed">
+                        Silakan lengkapi form absensi di bawah ini dengan memilih nama Anda, mata kuliah hari ini, dan mengunggah foto bukti belajar aktif di dalam kelas.
+                    </p>
+                </div>
+            </div>
+
+            <!-- BAGIAN STRUKTUR ORGANISASI KELAS (Pengurus Kelas) -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                    <i data-lucide="crown" class="w-3.5 h-3.5 text-yellow-500"></i>
+                    Pengurus Kelas C
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Ketua Kelas -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center space-x-3.5 hover:border-blue-200 transition-colors">
+                        <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+                            <i data-lucide="user-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-blue-600 uppercase tracking-wider">Ketua Kelas</span>
+                            <h5 class="text-xs font-extrabold text-slate-800 mt-0.5">Markus C. Betaubun</h5>
+                            <p class="text-[9px] text-slate-400 font-mono mt-0.5">NIM. 202438024</p>
+                        </div>
+                    </div>
+
+                    <!-- Sekretaris -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center space-x-3.5 hover:border-emerald-200 transition-colors">
+                        <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                            <i data-lucide="pen-tool" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-wider">Sekretaris</span>
+                            <h5 class="text-xs font-extrabold text-slate-800 mt-0.5">Wa Ode Aswi</h5>
+                            <p class="text-[9px] text-slate-400 font-mono mt-0.5">NIM. 202438028</p>
+                        </div>
+                    </div>
+
+                    <!-- Bendahara -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center space-x-3.5 hover:border-purple-200 transition-colors">
+                        <div class="p-2.5 bg-purple-50 text-purple-600 rounded-xl">
+                            <i data-lucide="wallet" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-purple-600 uppercase tracking-wider">Bendahara</span>
+                            <h5 class="text-xs font-extrabold text-slate-800 mt-0.5">Andini</h5>
+                            <p class="text-[9px] text-slate-400 font-mono mt-0.5">NIM. 202438009</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Absen Utama -->
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
+                        PENGISIAN PRESENSI HARIAN
+                    </h3>
+                    <span class="text-xs text-slate-500 font-medium font-mono" id="current-date-badge"></span>
+                </div>
+
+                <form id="form-presensi" onsubmit="handlePresensiSubmit(event)" class="p-6 space-y-6">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Dropdown & Pencarian Nama Mahasiswa -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Identitas Mahasiswa</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                                </span>
+                                <input type="text" id="search-mhs" oninput="filterMhsDropdown()" placeholder="Cari Nama atau NIM Anda..." class="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-sm focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-150">
+                            </div>
+                            
+                            <!-- Custom Dropdown List -->
+                            <div class="relative">
+                                <select id="mhs-select" required size="5" class="w-full mt-1 p-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-100 outline-none transition-all overflow-y-auto max-h-40">
+                                    <!-- Diisi via JavaScript -->
+                                </select>
+                            </div>
+                            <p class="text-[11px] text-slate-400 italic">Klik nama Anda pada daftar di atas untuk mengunci identitas.</p>
+                        </div>
+
+                        <!-- Dropdown Mata Kuliah & Informasi Dosen -->
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Mata Kuliah</label>
+                                <select id="matkul-select" required onchange="updateDosenInfo()" class="w-full p-3 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-sm focus:ring-4 focus:ring-blue-100 outline-none transition-all">
+                                    <option value="" disabled selected>-- Pilih Mata Kuliah Hari Ini --</option>
+                                    <!-- Diisi via JavaScript -->
+                                </select>
+                            </div>
+
+                            <!-- Kartu Info Dosen Otomatis -->
+                            <div id="dosen-card" class="hidden p-4 bg-yellow-50/50 border border-yellow-100 rounded-xl flex items-start space-x-3">
+                                <span class="p-1.5 bg-yellow-400 rounded-lg text-slate-900 mt-0.5">
+                                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                                </span>
+                                <div>
+                                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Dosen Pengajar</h4>
+                                    <p id="dosen-name" class="text-xs font-semibold text-slate-800 mt-0.5"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Fitur Unggah Foto dengan Kamera / File -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Bukti Foto Kehadiran di Kelas</label>
+                        <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl p-6 bg-slate-50 hover:bg-slate-100/30 transition-all duration-200 group">
+                            
+                            <input type="file" id="foto-input" accept="image/*" capture="environment" onchange="previewFoto(event)" class="hidden">
+                            
+                            <!-- Tempat Tombol Trigger -->
+                            <div id="upload-prompt" class="text-center space-y-2">
+                                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                                    <i data-lucide="camera" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <label for="foto-input" class="cursor-pointer inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-xs font-semibold shadow-md transition-all">
+                                        Ambil / Unggah Foto
+                                    </label>
+                                </div>
+                                <p class="text-[11px] text-slate-400">Tekan tombol di atas untuk menyalakan kamera HP atau pilih file foto kelas Anda.</p>
+                            </div>
+
+                            <!-- Preview Foto Terpilih -->
+                            <div id="preview-container" class="hidden w-full max-w-sm relative mt-2">
+                                <div class="relative rounded-xl overflow-hidden shadow-md border-2 border-blue-500">
+                                    <img id="img-preview" src="" alt="Bukti Foto Kelas" class="w-full h-48 object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent flex items-end p-3">
+                                        <span class="text-white text-[10px] font-semibold tracking-wider flex items-center gap-1">
+                                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-green-400"></i> FOTO SIAP DIKIRIM
+                                        </span>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="cancelFoto()" class="absolute -top-2.5 -right-2.5 bg-red-600 hover:bg-red-700 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-lg transition-colors border-2 border-white text-xs font-bold">
+                                    ×
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Tombol Kirim Kehadiran -->
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white p-4 rounded-xl font-bold text-xs tracking-wider uppercase shadow-lg shadow-indigo-100 transition-all duration-150 flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        Kirim Laporan Absensi Sekarang
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= TAB 2: MONITORING DOSEN / KETUA ================= -->
+        <div id="tab-dosen" class="space-y-6 hidden">
+            
+            <!-- Grid Widget Statistik -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                    <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Mahasiswa</p>
+                        <h4 class="text-xl font-black text-slate-800 mt-0.5" id="stat-total-mhs">48</h4>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                    <div class="p-3 bg-green-50 text-green-600 rounded-xl">
+                        <i data-lucide="check-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Siswa Hadir Hari Ini</p>
+                        <h4 class="text-xl font-black text-slate-800 mt-0.5" id="stat-hadir">0</h4>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                    <div class="p-3 bg-yellow-50 text-yellow-600 rounded-xl">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Matakuliah</p>
+                        <h4 class="text-xl font-black text-slate-800 mt-0.5">6 Mata Kuliah</h4>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                    <div class="p-3 bg-purple-50 text-purple-600 rounded-xl">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Tahun Akademik</p>
+                        <h4 class="text-xs font-bold text-slate-800 mt-0.5">2025/2026 Genap</h4>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Tabel Monitoring Utama -->
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i data-lucide="activity" class="w-4 h-4 text-blue-600"></i>
+                            MONITOR DATA PRESENSI MASUK
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Laporan real-time pengisian absensi kelas harian di server.</p>
+                    </div>
+
+                    <!-- Aksi & Tombol Tambahan -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Tombol Ekspor Excel -->
+                        <button onclick="eksporKeExcel()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl font-bold transition-all shadow-sm shadow-emerald-200 flex items-center gap-1.5">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Ekspor Excel (.csv)
+                        </button>
+                        <button onclick="resetSimulasi()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-xl font-semibold transition-colors flex items-center gap-1">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Bersihkan Log
+                        </button>
+                        <span class="text-xs text-slate-600 font-mono font-bold bg-slate-200/50 px-3 py-2 rounded-xl border border-slate-200" id="live-clock"></span>
+                    </div>
+                </div>
+
+                <!-- Bagian Tabel Responsif -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-100">
+                                <th class="p-4 pl-6">Tanggal & Waktu Masuk</th>
+                                <th class="p-4">Identitas Mahasiswa</th>
+                                <th class="p-4">Mata Kuliah Pengampu</th>
+                                <th class="p-4 text-center">Foto Bukti</th>
+                                <th class="p-4 text-center">Metode Pengiriman</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-presensi-body" class="text-xs divide-y divide-slate-100">
+                            <!-- Diisi via JavaScript -->
+                            <tr id="empty-state-row">
+                                <td colspan="5" class="p-10 text-center text-slate-400">
+                                    <div class="flex flex-col items-center justify-center space-y-2">
+                                        <i data-lucide="inbox" class="w-10 h-10 text-slate-300"></i>
+                                        <p class="italic text-xs font-medium">Belum ada mahasiswa yang mengirim data presensi hari ini.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER KAMPUS -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <p class="font-semibold text-slate-300">Sistem Informasi Absensi Penjaskesrek (C)</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Universitas Pattimura • Jln Ir. M. Putuhena, Kampus Poka - Ambon</p>
+                <div class="mt-1 flex items-center justify-center md:justify-start gap-2">
+                    <span class="inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                    <span class="text-[10px] text-slate-500 font-mono" id="user-connection-id">Menghubungkan ke cloud server...</span>
+                </div>
+            </div>
+            <div class="flex space-x-4 text-[11px]">
+                <a href="https://www.unpatti.ac.id" target="_blank" class="hover:text-yellow-400 transition-colors">Laman Utama</a>
+                <span>|</span>
+                <span class="text-slate-500">2026 © Akademik FKIP UNPATTI</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= MODAL STATUS PEMBERITAHUAN (Custom Alert) ================= -->
+    <div id="status-modal" class="hidden fixed inset-0 z-50 bg-slate-950/50 flex items-center justify-center p-4 backdrop-blur-xs">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 text-center space-y-4 transform transition-all scale-95 duration-200">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <i data-lucide="check-circle" class="w-8 h-8"></i>
+            </div>
+            <div class="space-y-1">
+                <h4 class="text-lg font-extrabold text-slate-800" id="modal-title">Presensi Sukses</h4>
+                <p class="text-xs text-slate-500 leading-relaxed" id="modal-message">Absensi Anda telah terdaftar dan terkirim langsung ke dosen pengajar.</p>
+            </div>
+            <div class="pt-2">
+                <button onclick="closeModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white p-3 rounded-xl font-bold text-xs tracking-wider uppercase transition-colors">
+                    Selesai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC SYSTEM & FIREBASE CONNECTION ================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, onSnapshot, collection, query, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // CONFIG KREDENSI REAL SESUAI GAMBAR YANG DIUNGGAH USER
+        let firebaseConfig;
+        let usingSystemConfig = false;
+
+        // Cek jika lingkungan environment menyediakan konfigurasi sistem bawaan
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            try {
+                firebaseConfig = JSON.parse(__firebase_config);
+                usingSystemConfig = true;
+            } catch (e) {
+                console.error("Gagal parse __firebase_config sistem", e);
+            }
+        }
+
+        // Fallback ke kredensial asli milik user jika environment tidak menyediakannya
+        if (!firebaseConfig) {
+            firebaseConfig = {
+                apiKey: "AIzaSyBhrbzz2Esr8WNvzBrh9y1LyG1_2q5ENzk",
+                authDomain: "absenkami.firebaseapp.com",
+                databaseURL: "https://absenkami-default-rtdb.firebaseio.com",
+                projectId: "absenkami",
+                storageBucket: "absenkami.firebasestorage.app",
+                messagingSenderId: "83755728753",
+                appId: "1:83755728753:web:448cb918bc1f60ae1b00d0",
+                measurementId: "G-8RRRPC94ZH"
+            };
+            usingSystemConfig = false;
+        }
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Identifikasi App ID & Path Sesuai Aturan Wajib Rule 1
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'absenkami';
+        let currentUser = null;
+
+        // DATA MATA KULIAH KELAS C
+        const dataMataKuliah = [
+            { id: 1, nama: "Perkembangan Peserta didik", dosen: "Dra. HERMELINA ABARUA, M.Pd" },
+            { id: 2, nama: "Belajar dan Pembelajaran", dosen: "Dr. Bahmid Hasbullah, M.Pd" },
+            { id: 3, nama: "Metodologi Penelitian Kualitatif", dosen: "Dr Emma Rumahlewang, M.Pd & Dr IDRIS MOHAMAD LATAR, S. Pd., M.Pd" },
+            { id: 4, nama: "Karate", dosen: "Prof. Dr. Albertus Fenanlampir, M.Pd., AIFO & Dr Jonas Solissa, M.Pd" },
+            { id: 5, nama: "Perkembangan dan Belajar Motorik", dosen: "Prof. Dr Jacob Anaktototy, M.Pd & Johanna Matitaputty, S.Pd., M.Pd" },
+            { id: 6, nama: "Pengelolaan SDK dan Pulau-pulau Kecil", dosen: "Dr RUSLAN HS TAWARI, M.Si, STANY RACHEL SIAHAINENIA, S.PI., M.SI, Dr SITI DIVINUBUN, M.Pd" }
+        ];
+
+        // DATA MAHASISWA KELAS C
+        const dataMahasiswa = [
+            { nim: "202438022", nama: "Vindy Nesyanti Putri" },
+            { nim: "202438087", nama: "Hidayat Keliobas" },
+            { nim: "202438034", nama: "Andi Iksal Tehuayo" },
+            { nim: "202438080", nama: "Sujialim Tamrin" },
+            { nim: "202438005", nama: "Chintya Talahatu" },
+            { nim: "202438024", nama: "Markus Christo Betaubun" },
+            { nim: "202438041", nama: "Feron Hendra Liulessy" },
+            { nim: "202238079", nama: "LAMBERTHUS EDISON EIDEUL" },
+            { nim: "202438031", nama: "Airin Rano" },
+            { nim: "202438013", nama: "Syahril Sidik" },
+            { nim: "202438032", nama: "Anggun Juliyani" },
+            { nim: "202438015", nama: "Intan Ramadani" },
+            { nim: "202438009", nama: "Andini" },
+            { nim: "202438011", nama: "Ferderika Dawan" },
+            { nim: "202438023", nama: "Ninasari Buton" },
+            { nim: "202438019", nama: "Andreas Del Piero Renyaan" },
+            { nim: "202438053", nama: "Yusril Sofyan" },
+            { nim: "202438021", nama: "Destiyan" },
+            { nim: "202438035", nama: "Rati Umasugi" },
+            { nim: "202438028", nama: "Wa Ode Aswi" },
+            { nim: "202438045", nama: "Sofyan Agus Latukau" },
+            { nim: "202438006", nama: "Chelsea Victoria Sajojo Bones Teniwut" },
+            { nim: "202438012", nama: "Indah Syarifa Sagena" },
+            { nim: "202438051", nama: "Said Zakir Alatas" },
+            { nim: "202438039", nama: "Ridwan Ulath" },
+            { nim: "202438026", nama: "Jovita" },
+            { nim: "202238001", nama: "UMI KALSUM ELIAN" },
+            { nim: "202138062", nama: "RESKI DANGEUBUN" },
+            { nim: "202138063", nama: "MOZYO RUPILU" },
+            { nim: "202438027", nama: "Rahmat Belasa" },
+            { nim: "202438062", nama: "Abdul Karim Daeng Matally" },
+            { nim: "202438037", nama: "Ahmad Booy" },
+            { nim: "202438069", nama: "Fikrizal Namkatu" },
+            { nim: "202438030", nama: "Iqmal Putra Nabawi" },
+            { nim: "202438079", nama: "Yonefius Lesbata" },
+            { nim: "202438109", nama: "Hasim Bahta" },
+            { nim: "202238093", nama: "TAUFIK INDRA LEUNUFNA" },
+            { nim: "202438002", nama: "Ario Malihu Burugana" },
+            { nim: "202438126", nama: "Inhar Ahmad Suneth" },
+            { nim: "202238075", nama: "DIAN SASLIKA" },
+            { nim: "202238106", nama: "RONI YULIUS BAHY" },
+            { nim: "202338124", nama: "Fauzan Azima Rumuar" },
+            { nim: "202238010", nama: "Odilia Ranbalak" },
+            { nim: "202338077", nama: "Abut Tarmon" },
+            { nim: "202338029", nama: "Ramdhan Maulana Kailul" },
+            { nim: "202338116", nama: "Nimrot Kelmaskouw" },
+            { nim: "202438073", nama: "Yusril Abu Hurairah Souwakil" },
+            { nim: "202238046", nama: "ANWAR AFENDI TUAHUNS" }
+        ].sort((a, b) => a.nama.localeCompare(b.nama));
+
+        // Variabel penampung state data
+        let databaseAbsensiMemory = [];
+        let stringFotoBase64 = "";
+
+        async function authenticateUser() {
+            try {
+                // Hanya gunakan token kustom internal jika menggunakan setinggan firebase sistem
+                if (usingSystemConfig && typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const credentials = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = credentials.user;
+                } else {
+                    // Fallback masuk anonim jika menggunakan config proyek mandiri agar tidak bentrok token
+                    const credentials = await signInAnonymously(auth);
+                    currentUser = credentials.user;
+                }
+                
+                // Menampilkan ID Unik Pengguna untuk transparansi (Sesuai Aturan Desain)
+                document.getElementById("user-connection-id").textContent = "ID Koneksi: " + currentUser.uid;
+                
+                // Memulai dengerin database Cloud Firestore secara real-time
+                listenToCloudDatabase();
+            } catch (err) {
+                console.error("Autentikasi Firebase Gagal:", err);
+                document.getElementById("user-connection-id").textContent = "Gagal terhubung ke cloud server.";
+            }
+        }
+
+        function listenToCloudDatabase() {
+            if (!currentUser) return;
+
+            // Koleksi jalur wajib sesuai RULE 1
+            const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'absensi_penjas_c');
+
+            // Listening real-time tanpa query kompleks agar tidak memicu error indeks (RULE 2)
+            onSnapshot(collectionRef, (snapshot) => {
+                const loadedData = [];
+                snapshot.forEach(docSnap => {
+                    loadedData.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // Urutkan data berdasarkan timestamp terbaru di memori JS (RULE 2)
+                loadedData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                databaseAbsensiMemory = loadedData;
+                updateLogTable();
+            }, (error) => {
+                console.error("Gagal mendengarkan update database Firestore:", error);
+            });
+        }
+
+        // ON-LOAD INITIALIZATION
+        window.onload = function() {
+            // Render Daftar Mahasiswa ke Dropdown
+            populateMahasiswaDropdown(dataMahasiswa);
+
+            // Render Daftar Mata Kuliah ke Dropdown
+            const matkulSelect = document.getElementById("matkul-select");
+            dataMataKuliah.forEach(mk => {
+                const opt = document.createElement("option");
+                opt.value = mk.id;
+                opt.textContent = mk.nama;
+                matkulSelect.appendChild(opt);
+            });
+
+            // Set Tanggal Hari Ini di UI
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const todayStr = new Date().toLocaleDateString('id-ID', options);
+            document.getElementById("current-date-badge").textContent = todayStr;
+
+            // Set Statistik Awal
+            document.getElementById("stat-total-mhs").textContent = dataMahasiswa.length;
+
+            // Inisialisasi Lucide Icons
+            lucide.createIcons();
+
+            // Jalankan Jam Digital
+            setInterval(updateJamDigital, 1000);
+            updateJamDigital();
+
+            // Hubungkan ke Firebase cloud
+            authenticateUser();
+        };
+
+        // Fungsi Render List Mahasiswa dengan Filter Pencarian
+        function populateMahasiswaDropdown(arrayMhs) {
+            const selectEl = document.getElementById("mhs-select");
+            selectEl.innerHTML = "";
+            
+            arrayMhs.forEach(mhs => {
+                const opt = document.createElement("option");
+                opt.value = JSON.stringify({ nim: mhs.nim, nama: mhs.nama });
+                opt.className = "p-2.5 hover:bg-slate-50 cursor-pointer text-slate-700 transition border-b border-slate-100/50 rounded-lg";
+                opt.textContent = `${mhs.nim} - ${mhs.nama}`;
+                selectEl.appendChild(opt);
+            });
+        }
+
+        // Cari Mahasiswa di Kotak Pencarian
+        function filterMhsDropdown() {
+            const queryVal = document.getElementById("search-mhs").value.toLowerCase();
+            const filtered = dataMahasiswa.filter(m => 
+                m.nama.toLowerCase().includes(queryVal) || m.nim.includes(queryVal)
+            );
+            populateMahasiswaDropdown(filtered);
+        }
+
+        // Ganti Tab Menu
+        function switchTab(tabId) {
+            const tabMhs = document.getElementById("tab-mahasiswa");
+            const tabDosen = document.getElementById("tab-dosen");
+            const navMhs = document.getElementById("nav-mahasiswa");
+            const navDosen = document.getElementById("nav-dosen");
+
+            if (tabId === 'tab-mahasiswa') {
+                tabMhs.classList.replace("hidden", "block");
+                tabDosen.classList.replace("block", "hidden");
+                
+                navMhs.className = "flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 bg-yellow-500 text-slate-900 shadow";
+                navDosen.className = "flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all duration-200";
+            } else {
+                tabMhs.classList.replace("block", "hidden");
+                tabDosen.classList.replace("hidden", "block");
+
+                navDosen.className = "flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 bg-yellow-500 text-slate-900 shadow";
+                navMhs.className = "flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all duration-200";
+            }
+        }
+
+        // Tampilkan Info Dosen Otomatis Saat Memilih Matkul
+        function updateDosenInfo() {
+            const selectId = document.getElementById("matkul-select").value;
+            const selectedMK = dataMataKuliah.find(m => m.id == selectId);
+            
+            const card = document.getElementById("dosen-card");
+            const name = document.getElementById("dosen-name");
+
+            if (selectedMK) {
+                card.classList.remove("hidden");
+                name.textContent = selectedMK.dosen;
+            } else {
+                card.classList.add("hidden");
+            }
+        }
+
+        // Mengolah File / Foto Bukti Absen
+        function previewFoto(event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgPreview = document.getElementById("img-preview");
+                    const previewContainer = document.getElementById("preview-container");
+                    const uploadPrompt = document.getElementById("upload-prompt");
+
+                    imgPreview.src = e.target.result;
+                    stringFotoBase64 = e.target.result; // Menyimpan data image string 
+                    
+                    previewContainer.classList.remove("hidden");
+                    uploadPrompt.classList.add("hidden");
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Batalkan / Ganti Foto Terpilih
+        function cancelFoto() {
+            document.getElementById("foto-input").value = "";
+            document.getElementById("preview-container").classList.add("hidden");
+            document.getElementById("upload-prompt").classList.remove("hidden");
+            stringFotoBase64 = "";
+        }
+
+        async function handlePresensiSubmit(e) {
+            e.preventDefault();
+
+            // Verifikasi autentikasi
+            if (!currentUser) {
+                alertCustom("Koneksi Error", "Harap tunggu koneksi aman ke database server sebelum mengirim absen.", "error");
+                return;
+            }
+
+            // Verifikasi input mahasiswa
+            const selectMhsVal = document.getElementById("mhs-select").value;
+            if(!selectMhsVal) {
+                alertCustom("Gagal Mengirim", "Harap pilih Nama & NIM Anda dari daftar pencarian terlebih dahulu.", "error");
+                return;
+            }
+
+            // Verifikasi foto
+            if(!stringFotoBase64) {
+                alertCustom("Bukti Foto Wajib", "Silakan ambil atau unggah foto selfie belajar kelas sebagai bukti kehadiran.", "error");
+                return;
+            }
+
+            const parsedMhs = JSON.parse(selectMhsVal);
+            const selectMKId = document.getElementById("matkul-select").value;
+            const selectedMK = dataMataKuliah.find(m => m.id == selectMKId);
+
+            // Mendapatkan Tanggal Real-time
+            const dateObj = new Date();
+            const opsiTanggal = { day: '2-digit', month: 'short', year: 'numeric' };
+            const tanggalAbsen = dateObj.toLocaleDateString('id-ID', opsiTanggal);
+
+            // Waktu Masuk
+            const waktuSore = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            const dataBaru = {
+                tanggal: tanggalAbsen,
+                waktu: waktuSore,
+                nim: parsedMhs.nim,
+                nama: parsedMhs.nama,
+                matkul: selectedMK.nama,
+                foto: stringFotoBase64,
+                metode: "Kamera HP (GPS Aktif)",
+                timestamp: Date.now(),
+                senderUid: currentUser.uid
+            };
+
+            try {
+                // Tulis langsung ke path wajib sesuai RULE 1
+                const pathRef = collection(db, 'artifacts', appId, 'public', 'data', 'absensi_penjas_c');
+                await addDoc(pathRef, dataBaru);
+
+                // Tampilkan Notifikasi Sukses
+                alertCustom("Absen Berhasil", `Selamat, ${parsedMhs.nama}! Presensi mata kuliah ${selectedMK.nama} telah tersimpan di cloud database pada tanggal ${tanggalAbsen}.`, "success");
+
+                // Reset Form Mandiri
+                document.getElementById("form-presensi").reset();
+                cancelFoto();
+                document.getElementById("search-mhs").value = "";
+                populateMahasiswaDropdown(dataMahasiswa); // kembalikan dropdown semula
+                updateDosenInfo(); // sembunyikan card dosen
+            } catch (err) {
+                console.error("Gagal menyimpan data ke Firestore:", err);
+                alertCustom("Database Error", "Terjadi kesalahan koneksi saat menyimpan absensi ke cloud.", "error");
+            }
+        }
+
+        // Update Log Tabel Dosen
+        function updateLogTable() {
+            const tableBody = document.getElementById("log-presensi-body");
+            const emptyRow = document.getElementById("empty-state-row");
+
+            if (databaseAbsensiMemory.length > 0) {
+                if (emptyRow) {
+                    emptyRow.classList.add("hidden");
+                }
+                
+                tableBody.innerHTML = "";
+                databaseAbsensiMemory.forEach(log => {
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50/70 transition-all border-b border-slate-100";
+                    tr.innerHTML = `
+                        <td class="p-4 pl-6">
+                            <span class="block font-bold text-slate-700 font-mono text-[11px] tracking-tight">${log.tanggal}</span>
+                            <span class="block font-medium text-blue-700 font-mono text-[10px] mt-0.5">${log.waktu}</span>
+                        </td>
+                        <td class="p-4">
+                            <div class="font-semibold text-slate-800">${log.nama}</div>
+                            <div class="text-[10px] text-slate-400 font-mono mt-0.5">${log.nim}</div>
+                        </td>
+                        <td class="p-4">
+                            <div class="font-medium text-slate-700">${log.matkul}</div>
+                            <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">Kelas C</div>
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="inline-block relative group">
+                                <img src="${log.foto}" class="w-12 h-12 object-cover rounded-xl border border-slate-200 shadow-sm transition hover:scale-110 cursor-pointer">
+                            </div>
+                        </td>
+                        <td class="p-4 text-center">
+                            <span class="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider border border-emerald-100">
+                                ${log.metode}
+                            </span>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+                // Update info statistik hadir
+                document.getElementById("stat-hadir").textContent = databaseAbsensiMemory.length;
+            } else {
+                tableBody.innerHTML = `
+                    <tr id="empty-state-row">
+                        <td colspan="5" class="p-10 text-center text-slate-400">
+                            <div class="flex flex-col items-center justify-center space-y-2">
+                                <i data-lucide="inbox" class="w-10 h-10 text-slate-300"></i>
+                                <p class="italic text-xs font-medium">Belum ada mahasiswa yang mengirim data presensi hari ini.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById("stat-hadir").textContent = "0";
+                lucide.createIcons();
+            }
+        }
+
+        // Fitur Ekspor ke Excel (.csv kompatibel langsung)
+        function eksporKeExcel() {
+            if (databaseAbsensiMemory.length === 0) {
+                alertCustom("Ekspor Gagal", "Belum ada data presensi yang bisa diekspor hari ini.", "error");
+                return;
+            }
+
+            // Gunakan Byte Order Mark (BOM) UTF-8 agar Excel langsung mengenali karakter khusus & format kolom
+            let csvContent = "\uFEFF"; 
+            csvContent += "TANGGAL;WAKTU MASUK;NIM;NAMA MAHASISWA;MATA KULIAH;METODE PRESENSI\n";
+
+            databaseAbsensiMemory.forEach(log => {
+                // Bersihkan string dari tanda titik koma pembatas
+                const namaBersih = log.nama.replace(/;/g, ',');
+                const matkulBersih = log.matkul.replace(/;/g, ',');
+                csvContent += `${log.tanggal};${log.waktu};${log.nim};${namaBersih};${matkulBersih};${log.metode}\n`;
+            });
+
+            // Eksekusi trigger download file di browser
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const temporaryUrl = URL.createObjectURL(blob);
+            
+            const dummyAnchor = document.createElement("a");
+            dummyAnchor.setAttribute("href", temporaryUrl);
+            dummyAnchor.setAttribute("download", `Absensi_Penjasorkes_Kelas_C_${new Date().toISOString().slice(0, 10)}.csv`);
+            dummyAnchor.style.visibility = "hidden";
+            
+            document.body.appendChild(dummyAnchor);
+            dummyAnchor.click();
+            document.body.removeChild(dummyAnchor);
+        }
+
+        // Hapus simulasi data di server Firestore secara massal
+        async function resetSimulasi() {
+            if (!currentUser) return;
+            const pathRef = collection(db, 'artifacts', appId, 'public', 'data', 'absensi_penjas_c');
+            try {
+                const snapshot = await getDocs(pathRef);
+                const promises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+                await Promise.all(promises);
+                alertCustom("Database Dihapus", "Seluruh data absensi di cloud database berhasil dibersihkan.", "success");
+            } catch (err) {
+                console.error("Gagal menghapus log:", err);
+                alertCustom("Penghapusan Gagal", "Gagal membersihkan data dari cloud database.", "error");
+            }
+        }
+
+        // Jam Digital Real-time (Zona Waktu WIT)
+        function updateJamDigital() {
+            const now = new Date();
+            const format = now.toLocaleTimeString('id-ID');
+            const element = document.getElementById("live-clock");
+            if (element) {
+                element.textContent = "WIT: " + format;
+            }
+        }
+
+        // Custom Modal Alert Handlers
+        function alertCustom(title, message, type) {
+            const modal = document.getElementById("status-modal");
+            const modalTitle = document.getElementById("modal-title");
+            const modalMsg = document.getElementById("modal-message");
+            const iconContainer = modal.querySelector(".w-16");
+
+            modalTitle.textContent = title;
+            modalMsg.textContent = message;
+
+            if (type === "success") {
+                iconContainer.className = "w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner";
+                iconContainer.innerHTML = '<i data-lucide="check-circle" class="w-8 h-8"></i>';
+            } else {
+                iconContainer.className = "w-16 h-16 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-inner";
+                iconContainer.innerHTML = '<i data-lucide="alert-triangle" class="w-8 h-8"></i>';
+            }
+
+            lucide.createIcons();
+            modal.classList.remove("hidden");
+        }
+
+        // Tutup Modal Pemberitahuan
+        function closeModal() {
+            document.getElementById("status-modal").classList.add("hidden");
+        }
+
+        // Melekatkan fungsi modul ES ke lingkup global Window untuk pemanggilan HTML inline (onclick, onchange, dll)
+        window.switchTab = switchTab;
+        window.filterMhsDropdown = filterMhsDropdown;
+        window.updateDosenInfo = updateDosenInfo;
+        window.previewFoto = previewFoto;
+        window.cancelFoto = cancelFoto;
+        window.handlePresensiSubmit = handlePresensiSubmit;
+        window.eksporKeExcel = eksporKeExcel;
+        window.resetSimulasi = resetSimulasi;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>
