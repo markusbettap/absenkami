@@ -106,11 +106,56 @@
                     <i data-lucide="award" class="w-80 h-80"></i>
                 </div>
                 <div class="relative z-10 max-w-2xl">
-                    <span class="bg-blue-700/60 text-yellow-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">PRESENSI MANDIRI ONLINE</span>
+                    <span class="bg-blue-700/60 text-yellow-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">PRESENSI REALTIME CLOUD</span>
                     <h2 class="text-2xl md:text-3xl font-extrabold mt-3 leading-tight">Selamat Datang di Sistem Absensi Kelas C</h2>
                     <p class="text-blue-100 text-xs md:text-sm mt-2 font-normal leading-relaxed">
                         Silakan lengkapi form absensi di bawah ini dengan memilih nama Anda, mata kuliah hari ini, dan mengunggah foto bukti belajar aktif di dalam kelas.
                     </p>
+                </div>
+            </div>
+
+            <!-- BAGIAN STRUKTUR ORGANISASI KELAS (Pengurus Kelas) -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                    <i data-lucide="crown" class="w-3.5 h-3.5 text-yellow-500"></i>
+                    Pengurus Kelas C
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Ketua Kelas -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center space-x-3.5 hover:border-blue-200 transition-colors">
+                        <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+                            <i data-lucide="user-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-blue-600 uppercase tracking-wider">Ketua Kelas</span>
+                            <h5 class="text-xs font-extrabold text-slate-800 mt-0.5">Markus C. Betaubun</h5>
+                            <p class="text-[9px] text-slate-400 font-mono mt-0.5">NIM. 202438024</p>
+                        </div>
+                    </div>
+
+                    <!-- Sekretaris -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center space-x-3.5 hover:border-emerald-200 transition-colors">
+                        <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                            <i data-lucide="pen-tool" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-wider">Sekretaris</span>
+                            <h5 class="text-xs font-extrabold text-slate-800 mt-0.5">Wa Ode Aswi</h5>
+                            <p class="text-[9px] text-slate-400 font-mono mt-0.5">NIM. 202438028</p>
+                        </div>
+                    </div>
+
+                    <!-- Bendahara -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center space-x-3.5 hover:border-purple-200 transition-colors">
+                        <div class="p-2.5 bg-purple-50 text-purple-600 rounded-xl">
+                            <i data-lucide="wallet" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-purple-600 uppercase tracking-wider">Bendahara</span>
+                            <h5 class="text-xs font-extrabold text-slate-800 mt-0.5">Andini</h5>
+                            <p class="text-[9px] text-slate-400 font-mono mt-0.5">NIM. 202438009</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -275,7 +320,7 @@
                             <i data-lucide="activity" class="w-4 h-4 text-blue-600"></i>
                             MONITOR DATA PRESENSI MASUK
                         </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Laporan real-time pengisian absensi kelas harian.</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Laporan real-time pengisian absensi kelas harian di server.</p>
                     </div>
 
                     <!-- Aksi & Tombol Tambahan -->
@@ -329,6 +374,10 @@
             <div class="text-center md:text-left">
                 <p class="font-semibold text-slate-300">Sistem Informasi Absensi Penjaskesrek (C)</p>
                 <p class="text-[11px] text-slate-500 mt-0.5">Universitas Pattimura • Jln Ir. M. Putuhena, Kampus Poka - Ambon</p>
+                <div class="mt-1 flex items-center justify-center md:justify-start gap-2">
+                    <span class="inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
+                    <span class="text-[10px] text-slate-500 font-mono" id="user-connection-id">Menghubungkan ke cloud server...</span>
+                </div>
             </div>
             <div class="flex space-x-4 text-[11px]">
                 <a href="https://www.unpatti.ac.id" target="_blank" class="hover:text-yellow-400 transition-colors">Laman Utama</a>
@@ -356,9 +405,33 @@
         </div>
     </div>
 
-    <!-- ================= JAVASCRIPT LOGIC SYSTEM ================= -->
-    <script>
-        // DATA KULIAH DARI LAMPIRAN PDF DOKUMEN ASLI
+    <!-- ================= JAVASCRIPT LOGIC SYSTEM & FIREBASE CONNECTION ================= -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, onSnapshot, collection, query, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // CONFIG KREDENSI REAL SESUAI GAMBAR YANG DIUNGGAH USER
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhrbzz2Esr8WNvzBrh9y1LyG1_2q5ENzk",
+            authDomain: "absenkami.firebaseapp.com",
+            databaseURL: "https://absenkami-default-rtdb.firebaseio.com",
+            projectId: "absenkami",
+            storageBucket: "absenkami.firebasestorage.app",
+            messagingSenderId: "83755728753",
+            appId: "1:83755728753:web:448cb918bc1f60ae1b00d0",
+            measurementId: "G-8RRRPC94ZH"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Identifikasi App ID & Path Sesuai Aturan Wajib Rule 1
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'absenkami';
+        let currentUser = null;
+
+        // DATA MATA KULIAH KELAS C
         const dataMataKuliah = [
             { id: 1, nama: "Perkembangan Peserta didik", dosen: "Dra. HERMELINA ABARUA, M.Pd" },
             { id: 2, nama: "Belajar dan Pembelajaran", dosen: "Dr. Bahmid Hasbullah, M.Pd" },
@@ -368,7 +441,7 @@
             { id: 6, nama: "Pengelolaan SDK dan Pulau-pulau Kecil", dosen: "Dr RUSLAN HS TAWARI, M.Si, STANY RACHEL SIAHAINENIA, S.PI., M.SI, Dr SITI DIVINUBUN, M.Pd" }
         ];
 
-        // DATA MAHASISWA KELAS C (Gabungan Unik dari Semua PDF)
+        // DATA MAHASISWA KELAS C
         const dataMahasiswa = [
             { nim: "202438022", nama: "Vindy Nesyanti Putri" },
             { nim: "202438087", nama: "Hidayat Keliobas" },
@@ -418,11 +491,55 @@
             { nim: "202338116", nama: "Nimrot Kelmaskouw" },
             { nim: "202438073", nama: "Yusril Abu Hurairah Souwakil" },
             { nim: "202238046", nama: "ANWAR AFENDI TUAHUNS" }
-        ].sort((a, b) => a.nama.localeCompare(b.nama)); // Mengurutkan berdasarkan alfabet
+        ].sort((a, b) => a.nama.localeCompare(b.nama));
 
         // Variabel penampung state data
         let databaseAbsensiMemory = [];
         let stringFotoBase64 = "";
+
+        async function authenticateUser() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    const credentials = await signInWithCustomToken(auth, __initial_auth_token);
+                    currentUser = credentials.user;
+                } else {
+                    const credentials = await signInAnonymously(auth);
+                    currentUser = credentials.user;
+                }
+                
+                // Menampilkan ID Unik Pengguna untuk transparansi (Sesuai Aturan Desain)
+                document.getElementById("user-connection-id").textContent = "ID Koneksi: " + currentUser.uid;
+                
+                // Memulai dengerin database Cloud Firestore secara real-time
+                listenToCloudDatabase();
+            } catch (err) {
+                console.error("Autentikasi Firebase Gagal:", err);
+                document.getElementById("user-connection-id").textContent = "Gagal terhubung ke cloud server.";
+            }
+        }
+
+        function listenToCloudDatabase() {
+            if (!currentUser) return;
+
+            // Koleksi jalur wajib sesuai RULE 1
+            const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'absensi_penjas_c');
+
+            // Listening real-time tanpa query kompleks agar tidak memicu error indeks (RULE 2)
+            onSnapshot(collectionRef, (snapshot) => {
+                const loadedData = [];
+                snapshot.forEach(docSnap => {
+                    loadedData.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                // Urutkan data berdasarkan timestamp terbaru di memori JS (RULE 2)
+                loadedData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                databaseAbsensiMemory = loadedData;
+                updateLogTable();
+            }, (error) => {
+                console.error("Gagal mendengarkan update database Firestore:", error);
+            });
+        }
 
         // ON-LOAD INITIALIZATION
         window.onload = function() {
@@ -452,6 +569,9 @@
             // Jalankan Jam Digital
             setInterval(updateJamDigital, 1000);
             updateJamDigital();
+
+            // Hubungkan ke Firebase cloud
+            authenticateUser();
         };
 
         // Fungsi Render List Mahasiswa dengan Filter Pencarian
@@ -470,9 +590,9 @@
 
         // Cari Mahasiswa di Kotak Pencarian
         function filterMhsDropdown() {
-            const query = document.getElementById("search-mhs").value.toLowerCase();
+            const queryVal = document.getElementById("search-mhs").value.toLowerCase();
             const filtered = dataMahasiswa.filter(m => 
-                m.nama.toLowerCase().includes(query) || m.nim.includes(query)
+                m.nama.toLowerCase().includes(queryVal) || m.nim.includes(queryVal)
             );
             populateMahasiswaDropdown(filtered);
         }
@@ -543,9 +663,14 @@
             stringFotoBase64 = "";
         }
 
-        // Kirim Absen / Form Submission
-        function handlePresensiSubmit(e) {
+        async function handlePresensiSubmit(e) {
             e.preventDefault();
+
+            // Verifikasi autentikasi
+            if (!currentUser) {
+                alertCustom("Koneksi Error", "Harap tunggu koneksi aman ke database server sebelum mengirim absen.", "error");
+                return;
+            }
 
             // Verifikasi input mahasiswa
             const selectMhsVal = document.getElementById("mhs-select").value;
@@ -572,7 +697,6 @@
             // Waktu Masuk
             const waktuSore = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-            // Masukkan data baru ke basis data memory aplikasi
             const dataBaru = {
                 tanggal: tanggalAbsen,
                 waktu: waktuSore,
@@ -580,23 +704,29 @@
                 nama: parsedMhs.nama,
                 matkul: selectedMK.nama,
                 foto: stringFotoBase64,
-                metode: "Kamera HP (GPS Aktif)"
+                metode: "Kamera HP (GPS Aktif)",
+                timestamp: Date.now(),
+                senderUid: currentUser.uid
             };
 
-            databaseAbsensiMemory.unshift(dataBaru);
+            try {
+                // Tulis langsung ke path wajib sesuai RULE 1
+                const pathRef = collection(db, 'artifacts', appId, 'public', 'data', 'absensi_penjas_c');
+                await addDoc(pathRef, dataBaru);
 
-            // Update Log Table view
-            updateLogTable();
+                // Tampilkan Notifikasi Sukses
+                alertCustom("Absen Berhasil", `Selamat, ${parsedMhs.nama}! Presensi mata kuliah ${selectedMK.nama} telah tersimpan di cloud database pada tanggal ${tanggalAbsen}.`, "success");
 
-            // Tampilkan Notifikasi Sukses
-            alertCustom("Absen Berhasil", `Selamat, ${parsedMhs.nama}! Presensi mata kuliah ${selectedMK.nama} telah tercatat di server pada tanggal ${tanggalAbsen}.`, "success");
-
-            // Reset Form Mandiri
-            document.getElementById("form-presensi").reset();
-            cancelFoto();
-            document.getElementById("search-mhs").value = "";
-            populateMahasiswaDropdown(dataMahasiswa); // kembalikan dropdown semula
-            updateDosenInfo(); // sembunyikan card dosen
+                // Reset Form Mandiri
+                document.getElementById("form-presensi").reset();
+                cancelFoto();
+                document.getElementById("search-mhs").value = "";
+                populateMahasiswaDropdown(dataMahasiswa); // kembalikan dropdown semula
+                updateDosenInfo(); // sembunyikan card dosen
+            } catch (err) {
+                console.error("Gagal menyimpan data ke Firestore:", err);
+                alertCustom("Database Error", "Terjadi kesalahan koneksi saat menyimpan absensi ke cloud.", "error");
+            }
         }
 
         // Update Log Tabel Dosen
@@ -690,17 +820,29 @@
             document.body.removeChild(dummyAnchor);
         }
 
-        // Hapus Simulasi data
-        function resetSimulasi() {
-            databaseAbsensiMemory = [];
-            updateLogTable();
+        // Hapus simulasi data di server Firestore secara massal
+        async function resetSimulasi() {
+            if (!currentUser) return;
+            const pathRef = collection(db, 'artifacts', appId, 'public', 'data', 'absensi_penjas_c');
+            try {
+                const snapshot = await getDocs(pathRef);
+                const promises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+                await Promise.all(promises);
+                alertCustom("Database Dihapus", "Seluruh data absensi di cloud database berhasil dibersihkan.", "success");
+            } catch (err) {
+                console.error("Gagal menghapus log:", err);
+                alertCustom("Penghapusan Gagal", "Gagal membersihkan data dari cloud database.", "error");
+            }
         }
 
         // Jam Digital Real-time (Zona Waktu WIT)
         function updateJamDigital() {
             const now = new Date();
             const format = now.toLocaleTimeString('id-ID');
-            document.getElementById("live-clock").textContent = "WIT: " + format;
+            const element = document.getElementById("live-clock");
+            if (element) {
+                element.textContent = "WIT: " + format;
+            }
         }
 
         // Custom Modal Alert Handlers
@@ -729,6 +871,17 @@
         function closeModal() {
             document.getElementById("status-modal").classList.add("hidden");
         }
+
+        // Melekatkan fungsi modul ES ke lingkup global Window untuk pemanggilan HTML inline (onclick, onchange, dll)
+        window.switchTab = switchTab;
+        window.filterMhsDropdown = filterMhsDropdown;
+        window.updateDosenInfo = updateDosenInfo;
+        window.previewFoto = previewFoto;
+        window.cancelFoto = cancelFoto;
+        window.handlePresensiSubmit = handlePresensiSubmit;
+        window.eksporKeExcel = eksporKeExcel;
+        window.resetSimulasi = resetSimulasi;
+        window.closeModal = closeModal;
     </script>
 </body>
 </html>
